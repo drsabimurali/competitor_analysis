@@ -70,5 +70,5 @@ if but_status and file_name:
   json_in = str(completion.choices[0].message.content)
   lis = json.loads(json_in)
   df = json_normalize(lis)
-  # st.write(dict.keys())
-  df.to_excel(file_name+".xlsx")
+  excel_data = dataframe_to_excel(df)
+  st.download_button(label='Download Excel', data=excel_data, file_name='data.xlsx', mime='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
