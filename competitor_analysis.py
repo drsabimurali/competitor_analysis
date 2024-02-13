@@ -3,6 +3,7 @@ import json
 import pandas as pd
 from pandas import json_normalize
 import streamlit as st
+import os
 
 st.header("Competitor Analysis")
 col1, col2 = st.columns(2)
@@ -53,6 +54,7 @@ st.markdown(
 )
 
 if but_status and file_name:
+  API_KEY = os.getenv('API_KEY')
   client = OpenAI(api_key = API_KEY)
   context = "I am an industrial expert in automotive component manufacturing industry. I am doing automotive market research in "+inp_mkt
   completion = client.chat.completions.create(
