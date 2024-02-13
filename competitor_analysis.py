@@ -7,11 +7,11 @@ import os
 from io import BytesIO
 
 st.header("Competitor Analysis")
-col1, col2 = st.columns(2)
-with col1:
-  file_name = st.text_input("Output File Name ","d:\dept\competitor_analysis")
-with col2:
-  but_status = st.button("Process")
+# col1, col2 = st.columns(2)
+# with col1:
+#   file_name = st.text_input("Output File Name ","d:\dept\competitor_analysis")
+# with col2:
+but_status = st.button("Process")
 
 fields_req = st.text_input("Required output information","Company name, Head quarter, Established Yr, No. of Employees,Turnover INR, Market share, Market segment, Strength, Weakness,Latest info ")
 
@@ -44,9 +44,9 @@ with st.sidebar:
   if inp_technology != "":
       prd_input= prd_input+ " using "+inp_technology+" technology"
 
-usr_input= "List down top "+str(no_of_companies)+" companies manufacturing  "+prd_input+" similar to "+Company_name+" product in "+inp_mkt_sgement+" segment for "+ inp_mkt+" in json format without header inside the json and do not include contents other than json. " +" Required fields "+fields_req 
+usr_input= "List down top "+str(no_of_companies)+" companies manufacturing  "+prd_input+" similar to "+Company_name+" product in "+inp_mkt_sgement+" segment for "+ inp_mkt+" in json format without header inside the json and do not include contents other than json. All the numbers in the json data should be in string format such that they are inside double quotes." +" Required fields "+fields_req 
 
-st.write(usr_input)
+# st.write(usr_input)
 st.markdown(
     f'<div style="background-color: lightblue; padding: 10px;">'
     f'<h2 style="color: black;>{usr_input}</h2>'
