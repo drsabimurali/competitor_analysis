@@ -62,7 +62,7 @@ def dataframe_to_excel(df):
     excel_data.seek(0)
     return excel_data
 
-if but_status and file_name:
+if but_status:
   API_KEY = os.getenv('API_KEY')
   client = OpenAI(api_key = API_KEY)
   context = "I am an industrial expert in automotive component manufacturing industry. I am doing automotive market research in "+inp_mkt
