@@ -4,6 +4,7 @@ import pandas as pd
 from pandas import json_normalize
 import streamlit as st
 import os
+from io import BytesIO
 
 st.header("Competitor Analysis")
 col1, col2 = st.columns(2)
@@ -53,9 +54,17 @@ st.markdown(
     unsafe_allow_html=True
 )
 
+def dataframe_to_excel(df):
+    # Write Excel file to BytesIO object
+    excel_data = BytesIO()
+    with pd.ExcelWriter(excel_data, engine='xlsxwriter') as writer:
+        df.to_excel(writer, index=False)
+    excel_data.seek(0)
+    return excel_data
+
 if but_status and file_name:
-  API_KEY = os.getenv('API_KEY')
-  client = OpenAI(api_key = API_KEY)
+  # API_KEY = os.getenv('API_KEY')
+  client = OpenAI(api_key = "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")
   context = "I am an industrial expert in automotive component manufacturing industry. I am doing automotive market research in "+inp_mkt
   completion = client.chat.completions.create(
     model="gpt-4",
