@@ -11,13 +11,16 @@ st.header("Competitor Analysis")
 # with col1:
 #   file_name = st.text_input("Output File Name ","d:\dept\competitor_analysis")
 # with col2:
-but_status = st.button("Process")
 
-fields_req = st.text_input("Required output information","Company name, Head quarter, Established Yr, No. of Employees,Turnover INR, Market share, Market segment, Strength, Weakness,Latest info ")
+fields_req = st.text_input("Required columns (comma separated)","Company name, Head quarter, Established Yr, No. of Employees,Company Turnover INR in Million, Market share, Market segment, Strength, Weakness,Latest info ")
 
 with st.sidebar:
   Company_name= st.text_input("Organisation","TVS Sensing Solutions")
-  no_of_companies= st.slider("Top n companies",5,25,step=5)
+  no_of_companies=st.number_input("Top n companies",5,10)
+  other_companies=st.text_input("Companies you want to include (comma separated)")
+
+  #st.slider("Top n companies",5,25,step=5)
+
   inp_mkt = st.radio("",["Indian market","Global market"],horizontal = True)
   inp_mkt_sgement= st.selectbox("Market segment",("Automotive","Industrial Solutions"))
   inp_prd_segment = st.selectbox("Product Segment",("Switches", "Sensors", "Solenoids","ECC","Electro Mechanical assembly","IoT","Others") )
@@ -43,16 +46,17 @@ with st.sidebar:
   inp_technology = st.text_input("Technology")
   if inp_technology != "":
       prd_input= prd_input+ " using "+inp_technology+" technology"
-
-usr_input= "List down top "+str(no_of_companies)+" companies manufacturing  "+prd_input+" similar to "+Company_name+" product in "+inp_mkt_sgement+" segment for "+ inp_mkt+" in json format without header inside the json and do not include contents other than json. All the numbers in the json data should be in string format such that they are inside double quotes." +" Required fields "+fields_req 
+if inp_mkt=="Indian Market":
+  inp_mkt1 = "Indian"
+else :
+   inp_mkt1="Global"
+o_c = ""
+if other_companies:
+  o_c = ". excluding the top" + str(no_of_companies) + "companies, include these companies as well "+other_companies
+usr_input= "List down top "+str(no_of_companies)+"  "+ inp_mkt1 +" companies manufacturing  "+prd_input+" similar to "+Company_name+" product in "+inp_mkt_sgement+" segment for "+ inp_mkt+" in json format without header inside the json and do not include contents other than json. All the numbers in the json data should be in string format such that they are inside double quotes" +" Required fields "+fields_req+o_c
 
 # st.write(usr_input)
-st.markdown(
-    f'<div style="background-color: lightblue; padding: 10px;">'
-    f'<h2 style="color: black;>{usr_input}</h2>'
-    '</div>',
-    unsafe_allow_html=True
-)
+but_status = st.button("Process")
 
 def dataframe_to_excel(df):
     # Write Excel file to BytesIO object
@@ -63,21 +67,36 @@ def dataframe_to_excel(df):
     return excel_data
 
 if but_status:
-  API_KEY = os.getenv('API_KEY')
-  client = OpenAI(api_key = API_KEY)
-  context = "I am an industrial expert in automotive component manufacturing industry. I am doing automotive market research in "+inp_mkt
-  completion = client.chat.completions.create(
-    model="gpt-4",
-    messages=[
-        {"role": "user", "content": '{"context": "' + context + '", "format": "json"}'},
-        {"role": "user", "content": usr_input}
-    ]
-  )
+    API_KEY = os.getenv('API_KEY')
+  with st.spinner('Processing...'):
+    client = OpenAI(api_key = API_KEY)
+    context = "I am an industrial expert in automotive component manufacturing industry. I am doing automotive market research in "+inp_mkt
+    completion = client.chat.completions.create(
+      model="gpt-4",
+      messages=[
+          {"role": "user", "content": '{"context": "' + context + '", "format": "json"}'},
+          {"role": "user", "content": usr_input}
+      ]
+    )
 
-  st.write(completion.choices[0].message.content)
-
-  json_in = str(completion.choices[0].message.content)
+  #st.write(completion.choices[0].message.content)
+  obj = completion.choices[0].message.content
+  # print(obj[1],"***")
+  # c = 0
+  # i = 0
+  # if obj[1] != '{':
+  #    while i<len(obj) and c!=2:
+  #       if obj[i] == '[':
+  #         c += 1
+  #       i += 1
+  # nobj = obj[i:len(obj)-2]
+  # print(nobj)
+  json_in = str(obj)
   lis = json.loads(json_in)
+  nobj = lis
+  if len(lis) == 1:
+      for i in lis:
+          nobj = lis[i]
   json_in = json_in.replace("'", '"')
   df = json_normalize(lis)
   excel_data = dataframe_to_excel(df)
