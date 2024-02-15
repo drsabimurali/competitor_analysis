@@ -7,11 +7,6 @@ import os
 from io import BytesIO
 
 st.header("Competitor Analysis")
-# col1, col2 = st.columns(2)
-# with col1:
-#   file_name = st.text_input("Output File Name ","d:\dept\competitor_analysis")
-# with col2:
-
 fields_req = st.text_input("Required columns (comma separated)","Company name, Head quarter, Established Yr, No. of Employees,Company Turnover INR in Million, Market share, Market segment, Strength, Weakness,Latest info ")
 
 with st.sidebar:
@@ -56,7 +51,6 @@ usr_input= "List down top "+str(no_of_companies)+"  "+ inp_mkt1 +" companies man
 but_status = st.button("Process")
 
 def dataframe_to_excel(df):
-    # Write Excel file to BytesIO object
     excel_data = BytesIO()
     with pd.ExcelWriter(excel_data, engine='xlsxwriter') as writer:
         df.to_excel(writer, index=False)
@@ -64,7 +58,7 @@ def dataframe_to_excel(df):
     return excel_data
 
 if but_status:
-    API_KEY = os.getenv('API_KEY')
+  API_KEY = os.getenv('API_KEY')
   with st.spinner('Processing...'):
     client = OpenAI(api_key = API_KEY)
     context = "I am an industrial expert in automotive component manufacturing industry. I am doing automotive market research in "+inp_mkt
