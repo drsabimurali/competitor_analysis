@@ -19,8 +19,6 @@ with st.sidebar:
   no_of_companies=st.number_input("Top n companies",5,10)
   other_companies=st.text_input("Companies you want to include (comma separated)")
 
-  #st.slider("Top n companies",5,25,step=5)
-
   inp_mkt = st.radio("",["Indian market","Global market"],horizontal = True)
   inp_mkt_sgement= st.selectbox("Market segment",("Automotive","Industrial Solutions"))
   inp_prd_segment = st.selectbox("Product Segment",("Switches", "Sensors", "Solenoids","ECC","Electro Mechanical assembly","IoT","Others") )
@@ -55,7 +53,6 @@ if other_companies:
   o_c = ". excluding the top" + str(no_of_companies) + "companies, include these companies as well "+other_companies
 usr_input= "List down top "+str(no_of_companies)+"  "+ inp_mkt1 +" companies manufacturing  "+prd_input+" similar to "+Company_name+" product in "+inp_mkt_sgement+" segment for "+ inp_mkt+" in json format without header inside the json and do not include contents other than json. All the numbers in the json data should be in string format such that they are inside double quotes" +" Required fields "+fields_req+o_c
 
-# st.write(usr_input)
 but_status = st.button("Process")
 
 def dataframe_to_excel(df):
@@ -78,19 +75,8 @@ if but_status:
           {"role": "user", "content": usr_input}
       ]
     )
-
-  #st.write(completion.choices[0].message.content)
+    
   obj = completion.choices[0].message.content
-  # print(obj[1],"***")
-  # c = 0
-  # i = 0
-  # if obj[1] != '{':
-  #    while i<len(obj) and c!=2:
-  #       if obj[i] == '[':
-  #         c += 1
-  #       i += 1
-  # nobj = obj[i:len(obj)-2]
-  # print(nobj)
   json_in = str(obj)
   lis = json.loads(json_in)
   nobj = lis
